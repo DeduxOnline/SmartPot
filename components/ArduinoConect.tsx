@@ -9,23 +9,32 @@ const BluetoothExample = () => {
   const [connectedDevices, setConnectedDevices] = useState<BluetoothDevice[]>(
     []
   );
+  const [status, setStatus] = useState<string>("");
 
-  useEffect(() => {
-    console.log(RNBluetoothClassic);
-    RNBluetoothClassic.getConnectedDevices().then((item) =>
-      setConnectedDevices(item)
-    );
-  }, []);
-
-  const sendMessageToDevice = (device: BluetoothDevice) => {
-    const message = "1";
-    RNBluetoothClassic.writeToDevice(device.address, message)
-      .then(() => {
-        console.log("Message sent successfully");
-      })
-      .catch((error) => {
-        console.error("Error sending message:", error);
-      });
+  const getDeviceConetion = async () => {
+    try {
+      const [YESBT, ONBT] = await Promise.all([
+        RNBluetoothClassic.isBluetoothAvailable(),
+        RNBluetoothClassic.isBluetoothEnabled(),
+      ]);
+      console.log(YESBT, ONBT);
+      if (!YESBT || !ONBT) {
+        setStatus(YESBT ? "Bluetooth is off" : "You don't have bluetooth");
+        return;
+      } else {
+        const deviceList: BluetoothDevice[] =
+          await RNBluetoothClassic.getConnectedDevices();
+        setConnectedDevices(deviceList);
+        setStatus(
+          deviceList.length > 0 ? "Devices finded" : "Devices not finded"
+        );
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus(JSON.stringify(error));
+      return;
+    }
   };
 
   const renderItem = ({ item }: { item: BluetoothDevice }) => (
@@ -33,12 +42,17 @@ const BluetoothExample = () => {
       style={{ flexDirection: "row", alignItems: "center", marginVertical: 5 }}
     >
       <Text>{item.name}</Text>
-      <Button title="Send Message" onPress={() => sendMessageToDevice(item)} />
+      <Button title="Add Pot" onPress={() => null} />
     </View>
   );
 
   return (
     <View style={{ flex: 1 }}>
+      <Text>{status}</Text>
+      <Button
+        title="Scan Bluetooth"
+        onPress={async () => await getDeviceConetion()}
+      />
       <FlatList
         data={connectedDevices}
         renderItem={renderItem}
