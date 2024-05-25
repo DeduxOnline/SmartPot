@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, FlatList } from "react-native";
+import { View, Text, Button, FlatList, Pressable } from "react-native";
 import RNBluetoothClassic, {
   BluetoothEventType,
   BluetoothDevice,
 } from "react-native-bluetooth-classic";
 
-const BluetoothExample = () => {
+const AddPot = () => {
   const [connectedDevices, setConnectedDevices] = useState<BluetoothDevice[]>(
     []
   );
@@ -62,4 +62,4 @@ const BluetoothExample = () => {
   );
 };
 
-export default BluetoothExample;
+export default AddPot;
