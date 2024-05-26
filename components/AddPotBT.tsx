@@ -30,9 +30,9 @@ const AddPot = () => {
         );
         return;
       }
-    } catch (error) {
-      console.error(error);
-      setStatus(JSON.stringify(error));
+    } catch (error: any) {
+      console.error(error.message);
+      setStatus(error.message);
       return;
     }
   };
@@ -47,8 +47,8 @@ const AddPot = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <Text>{status}</Text>
+    <View style={{ flex: 1, padding: 15 }}>
+      <Text style={{ backgroundColor: "gray" }}>{status}</Text>
       <Button
         title="Scan Bluetooth"
         onPress={async () => await getDeviceConetion()}

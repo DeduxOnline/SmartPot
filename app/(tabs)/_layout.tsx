@@ -57,7 +57,7 @@ export default function TabLayout() {
           title: "Options",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "options" : "open-outline"}
+              name={focused ? "options" : "options-outline"}
               color={color}
             />
           ),

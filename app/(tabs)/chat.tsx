@@ -1,5 +1,5 @@
-// import BluetoothExample from "@/components/ArduinoConect";
+import ChatScreen from "@/components/ChatPage";
 
 export default function HomeScreen() {
-  return <></>;
+  return <ChatScreen />;
 }
