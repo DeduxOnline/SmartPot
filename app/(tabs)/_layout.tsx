@@ -10,10 +10,13 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
-      }}
+        tabBarStyle: {
+          display: route.name === "plant" ? "none" : "flex",
+        },
+      })}
     >
       <Tabs.Screen
         name="index"
@@ -40,18 +43,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="chat"
-        options={{
-          title: "Chat",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "chatbox-ellipses" : "chatbox-ellipses-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="options"
         options={{
           title: "Options",
@@ -61,6 +52,12 @@ export default function TabLayout() {
               color={color}
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="plant"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

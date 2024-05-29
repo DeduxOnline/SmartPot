@@ -24,8 +24,8 @@ const ChatScreen = () => {
         body: JSON.stringify({ message }),
       });
       const data = await response.json();
-    } catch (error) {
-      console.error("Помилка під час взаємодії з ШІ:", error);
+    } catch (error: any) {
+      console.error(error.message);
     }
   };
 
