@@ -9,6 +9,7 @@ import {
   Button,
 } from "react-native";
 import { router } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Import images statically
 const images: any = {
@@ -21,12 +22,59 @@ const images: any = {
 };
 
 const products: any = [
-  { id: "1", name: "Plant 1", pic: 1, mac: null, lastConnection: "29/05/2024" },
-  { id: "2", name: "Plant 2", pic: 2, mac: null, lastConnection: "29/05/2024" },
-  { id: "3", name: "Plant 3", pic: 3, mac: null, lastConnection: "29/05/2024" },
-  { id: "4", name: "Plant 4", pic: 4, mac: null, lastConnection: "29/05/2024" },
-  { id: "5", name: "Plant 5", pic: 5, mac: null, lastConnection: "29/05/2024" },
-  { id: "6", name: "Plant 6", pic: 6, mac: null, lastConnection: "29/05/2024" },
+  {
+    id: "1",
+    name: "Plant 1",
+    pic: 1,
+    mac: null,
+    watering: true,
+    light: false,
+    lastConnection: "29/05/2024",
+  },
+  {
+    id: "2",
+    name: "Plant 2",
+    pic: 2,
+    mac: null,
+    watering: true,
+    light: false,
+    lastConnection: "25/05/2024",
+  },
+  {
+    id: "3",
+    name: "Plant 3",
+    pic: 3,
+    mac: null,
+    watering: true,
+    light: false,
+    lastConnection: "24/05/2024",
+  },
+  {
+    id: "4",
+    name: "Plant 4",
+    pic: 4,
+    mac: null,
+    watering: true,
+    light: false,
+    lastConnection: "23/05/2024",
+  },
+  {
+    id: "5",
+    name: "Plant 5",
+    pic: 5,
+    mac: null,
+    watering: true,
+    light: false,
+    lastConnection: "25/05/2024",
+  },
+  {
+    id: "6",
+    name: "Plant 6",
+    pic: 6,
+    mac: null,
+    conected: false,
+    lastConnection: "27/05/2024",
+  },
 ];
 
 export default function HomeScreen() {
@@ -48,7 +96,9 @@ export default function HomeScreen() {
             >
               <Image source={images[item.pic]} style={styles.productImage} />
               <Text style={styles.productName}>{item.name}</Text>
-              <Button title="Water" onPress={() => router.push("/add")} />
+              <View style={{ marginLeft: "auto" }}>
+                <Text>Last time conected at {item.lastConnection}</Text>
+              </View>
             </TouchableOpacity>
           )}
         />

@@ -76,6 +76,7 @@ const FormPage = () => {
         <Text style={styles.label}>Enable: </Text>
         <Switch value={toggle1} onValueChange={setToggle1} />
       </View>
+      <Text style={styles.label}>Advance option:</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Minimum moist</Text>
         <TextInput
