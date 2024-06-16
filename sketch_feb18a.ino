@@ -42,9 +42,9 @@ void setup() {
   Serial.println("Setup...");
 
   // Завантаження налаштувань з EEPROM
-  luxThreshold = EEPROM.read(EEPROM_LUX_THRESHOLD_ADDR);
-  moistureLowThreshold = EEPROM.read(EEPROM_MOISTURE_LOW_ADDR);
-  moistureHighThreshold = EEPROM.read(EEPROM_MOISTURE_HIGH_ADDR);
+  // luxThreshold = EEPROM.read(EEPROM_LUX_THRESHOLD_ADDR);
+  // moistureLowThreshold = EEPROM.read(EEPROM_MOISTURE_LOW_ADDR);
+  // moistureHighThreshold = EEPROM.read(EEPROM_MOISTURE_HIGH_ADDR);
 
   // Ініціалізація реле
   pinMode(relayPin, OUTPUT);    // Встановлення піну реле як вихід
@@ -115,21 +115,21 @@ void yield() {
     Serial.println(command);
 
     // Обробка команд
-    if (command.startsWith("LUX:")) {
-      luxThreshold = command.substring(4).toInt();
-      EEPROM.update(EEPROM_LUX_THRESHOLD_ADDR, luxThreshold);
-      Serial.print("Lux threshold set to: ");
-      Serial.println(luxThreshold);
-    } else if (command.startsWith("MOISTURE_LOW:")) {
-      moistureLowThreshold = command.substring(13).toInt();
-      EEPROM.update(EEPROM_MOISTURE_LOW_ADDR, moistureLowThreshold);
-      Serial.print("Moisture low threshold set to: ");
-      Serial.println(moistureLowThreshold);
-    } else if (command.startsWith("MOISTURE_HIGH:")) {
-      moistureHighThreshold = command.substring(14).toInt();
-      EEPROM.update(EEPROM_MOISTURE_HIGH_ADDR, moistureHighThreshold);
-      Serial.print("Moisture high threshold set to: ");
-      Serial.println(moistureHighThreshold);
-    }
+    // if (command.startsWith("LUX:")) {
+    //   luxThreshold = command.substring(4).toInt();
+    //   EEPROM.update(EEPROM_LUX_THRESHOLD_ADDR, luxThreshold);
+    //   Serial.print("Lux threshold set to: ");
+    //   Serial.println(luxThreshold);
+    // } else if (command.startsWith("MOISTURE_LOW:")) {
+    //   moistureLowThreshold = command.substring(13).toInt();
+    //   EEPROM.update(EEPROM_MOISTURE_LOW_ADDR, moistureLowThreshold);
+    //   Serial.print("Moisture low threshold set to: ");
+    //   Serial.println(moistureLowThreshold);
+    // } else if (command.startsWith("MOISTURE_HIGH:")) {
+    //   moistureHighThreshold = command.substring(14).toInt();
+    //   EEPROM.update(EEPROM_MOISTURE_HIGH_ADDR, moistureHighThreshold);
+    //   Serial.print("Moisture high threshold set to: ");
+    //   Serial.println(moistureHighThreshold);
+    // }
   }
 }
