@@ -3,23 +3,13 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   Image,
   Button,
 } from "react-native";
 import { router } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
-
-// Import images statically
-const images: any = {
-  1: require("@/assets/images/pot1.png"),
-  2: require("@/assets/images/pot2.png"),
-  3: require("@/assets/images/pot3.png"),
-  4: require("@/assets/images/pot4.png"),
-  5: require("@/assets/images/pot5.png"),
-  6: require("@/assets/images/pot6.png"),
-};
+import { images } from "@/constants/Picturs";
 
 const products: any = [
   {
@@ -90,7 +80,7 @@ export default function HomeScreen() {
           data={products}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <Pressable
               style={styles.productItem}
               onPress={() => router.push("/plant")}
             >
@@ -99,7 +89,7 @@ export default function HomeScreen() {
               <View style={{ marginLeft: "auto" }}>
                 <Text>Last time conected at {item.lastConnection}</Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           )}
         />
       )}

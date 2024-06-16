@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { images } from "@/constants/Picturs";
 import {
   View,
   Text,
@@ -10,31 +11,25 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 
-const images: any = {
-  1: require("@/assets/images/pot1.png"),
-  2: require("@/assets/images/pot2.png"),
-  3: require("@/assets/images/pot3.png"),
-  4: require("@/assets/images/pot4.png"),
-  5: require("@/assets/images/pot5.png"),
-  6: require("@/assets/images/pot6.png"),
-};
-
-const FormPage = () => {
-  const [name, setName] = useState("");
-  const [toggle1, setToggle1] = useState(false);
-  const [number1, setNumber1] = useState("40");
-  const [number2, setNumber2] = useState("70");
-  const [pictureNum, setPictureNum] = useState(1);
+const EditPage = ({
+  formData,
+  mac,
+}: {
+  formData: Plant | undefined;
+  mac: string;
+}) => {
+  const [plant, setPlant] = useState<Plant>(
+    formData ?? {
+      pictureNum: 1,
+      name: "Plant",
+      address: mac,
+      watering: { status: false, min: "40", max: "70" },
+      light: { status: false, lux: "100", timeRunH: "2" },
+    }
+  );
 
   const handleSave = () => {
-    console.log("Name:", name);
-    console.log("Toggle 1:", toggle1);
-    console.log("Number 1:", number1);
-    console.log("Number 2:", number2);
-    setName("");
-    setToggle1(false);
-    setNumber1("");
-    setNumber2("");
+    console.log("Plant Data:", plant);
     router.replace("/");
   };
 
@@ -43,15 +38,23 @@ const FormPage = () => {
   };
 
   const handlePrevPicture = () => {
-    setPictureNum((prevNum) =>
-      prevNum === 1 ? Object.keys(images).length : prevNum - 1
-    );
+    setPlant((prevPlant) => ({
+      ...prevPlant,
+      pictureNum:
+        prevPlant.pictureNum === 1
+          ? Object.keys(images).length
+          : prevPlant.pictureNum - 1,
+    }));
   };
 
   const handleNextPicture = () => {
-    setPictureNum((prevNum) =>
-      prevNum === Object.keys(images).length ? 1 : prevNum + 1
-    );
+    setPlant((prevPlant) => ({
+      ...prevPlant,
+      pictureNum:
+        prevPlant.pictureNum === Object.keys(images).length
+          ? 1
+          : prevPlant.pictureNum + 1,
+    }));
   };
 
   return (
@@ -59,45 +62,111 @@ const FormPage = () => {
       <View style={styles.inputContainer}>
         <Button title="<" onPress={handlePrevPicture} />
         <Image
-          source={images[pictureNum]}
-          style={{ width: 200, height: 200 }}
+          source={images[plant.pictureNum]}
+          style={{ width: 75, height: 75 }}
         />
         <Button title=">" onPress={handleNextPicture} />
       </View>
       <Text style={styles.label}>Name:</Text>
       <TextInput
         style={styles.input}
-        value={name}
-        onChangeText={setName}
+        value={plant.name}
+        onChangeText={(text) =>
+          setPlant((prevPlant) => ({ ...prevPlant, name: text }))
+        }
         placeholder="Enter your name"
       />
       <Text style={styles.label}>Automatic watering:</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Enable: </Text>
-        <Switch value={toggle1} onValueChange={setToggle1} />
+        <Switch
+          value={plant.watering.status}
+          onValueChange={(value) =>
+            setPlant((prevPlant) => ({
+              ...prevPlant,
+              watering: { ...prevPlant.watering, status: value },
+            }))
+          }
+        />
       </View>
       <Text style={styles.label}>Advance option:</Text>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Minimum moist</Text>
+        <Text style={styles.label}>Minimum moist </Text>
         <TextInput
           style={styles.numberInput}
-          value={number1}
-          onChangeText={setNumber1}
+          value={plant.watering.min}
+          onChangeText={(text) =>
+            setPlant((prevPlant) => ({
+              ...prevPlant,
+              watering: { ...prevPlant.watering, min: text },
+            }))
+          }
           placeholder="Enter number"
           keyboardType="numeric"
         />
         <Text style={styles.label}> %</Text>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Maximum moist</Text>
+        <Text style={styles.label}>Maximum moist </Text>
         <TextInput
           style={styles.numberInput}
-          value={number2}
-          onChangeText={setNumber2}
+          value={plant.watering.max}
+          onChangeText={(text) =>
+            setPlant((prevPlant) => ({
+              ...prevPlant,
+              watering: { ...prevPlant.watering, max: text },
+            }))
+          }
           placeholder="Enter number"
           keyboardType="numeric"
         />
         <Text style={styles.label}> %</Text>
+      </View>
+      <Text style={styles.label}>Additional light:</Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Enable: </Text>
+        <Switch
+          value={plant.light.status}
+          onValueChange={(value) =>
+            setPlant((prevPlant) => ({
+              ...prevPlant,
+              light: { ...prevPlant.light, status: value },
+            }))
+          }
+        />
+      </View>
+      <Text style={styles.label}>Advance option:</Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Lights on </Text>
+        <TextInput
+          style={styles.numberInput}
+          value={plant.light.lux}
+          onChangeText={(text) =>
+            setPlant((prevPlant) => ({
+              ...prevPlant,
+              light: { ...prevPlant.light, lux: text },
+            }))
+          }
+          placeholder="Enter number"
+          keyboardType="numeric"
+        />
+        <Text style={styles.label}> lux</Text>
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Time work </Text>
+        <TextInput
+          style={styles.numberInput}
+          value={plant.light.timeRunH}
+          onChangeText={(text) =>
+            setPlant((prevPlant) => ({
+              ...prevPlant,
+              light: { ...prevPlant.light, timeRunH: text },
+            }))
+          }
+          placeholder="Enter number"
+          keyboardType="numeric"
+        />
+        <Text style={styles.label}> h</Text>
       </View>
       <View style={styles.buttonContainer}>
         <Button title="Save" onPress={handleSave} />
@@ -144,4 +213,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormPage;
+export default EditPage;

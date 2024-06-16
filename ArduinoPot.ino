@@ -16,12 +16,18 @@
 #define EEPROM_MOISTURE_HIGH_ADDR 4
 
 // Змінні для налаштувань
+bool lightsOn = true;
 int luxThreshold = 100;
-int moistureLowThreshold = 35;
+int lightRunTime = 2;
+unsigned long ledStartTime = 0;
+const unsigned long ledRunTime = lightRunTime * 60 * 60 * 1000; //години в мілісекундах
+
+bool wateringOn = true;
+int moistureLowThreshold = 40;
 int moistureHighThreshold = 70;
 
 // Створення об'єкта для роботи з BT
-SoftwareSerial BTSerial(2, 3); //BT_RX_PIN BT_TX_PIN
+SoftwareSerial BTSerial(5, 6); //BT_RX_PIN BT_TX_PIN
 
 // Створення об'єкта для роботи з світлодіодами
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numberOfPixels, dataInPixel, NEO_GRB + NEO_KHZ800);
@@ -29,8 +35,9 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numberOfPixels, dataInPixel, NEO_GR
 // Створення об'єкта для датчика освітленості
 BH1750 lightMeter;              
 
-// Змінна для зберігання стану реле
+// Змінна для зберігання
 bool relayState = false;        
+bool pixelState = false;
 
 // Змінна для зберігання часу останнього виконання циклу
 unsigned long previousMillis = 0;
@@ -71,40 +78,54 @@ void loop() {
     previousMillis = currentMillis;
 
     // Зчитування рівня освітленості з датчика
-    uint16_t lux = lightMeter.readLightLevel();  
+    uint16_t lux = lightMeter.readLightLevel();
+    if (lux == 65535) { // 65535 може бути значенням помилки
+      Serial.println("Error reading light level");
+    }
+
     // Зчитування значення вологості з датчика
     int soilMoistureValue = analogRead(soilMoisturePin);
     // Конвертація значення вологості у відсотки
     int moisturePercentage = map(soilMoistureValue, 1023, 0, 0, 100);
 
-    // Логіка увімкнення світлодіодної стрічки
-    if (lux < luxThreshold) {
-      for (int i = 0; i < numberOfPixels; i++) {
-        pixels.setPixelColor(i, pixels.Color(127, 0, 255));
-      }
-      pixels.show();  // Показати зміни на стрічці
-    } else {
-      // Вимкнення світлодіодної стрічки
-      for (int i = 0; i < numberOfPixels; i++) {
-        pixels.setPixelColor(i, 0);  // Вимкнення світлодіода
-      }
-      pixels.show();  // Показати зміни на стрічці
-    }
-
-    // Логіка керування реле на основі рівня вологості
-    if (moisturePercentage < moistureLowThreshold && !relayState) { // Якщо вологість менше порогу і реле вимкнене
-      digitalWrite(relayPin, HIGH); // Увімкнути реле
-      relayState = true;
-      Serial.println("Relay ON");
-    } else if (moisturePercentage >= moistureHighThreshold && relayState) { // Якщо вологість більше або дорівнює порогу і реле увімкнене
-      digitalWrite(relayPin, LOW); // Вимкнути реле
-      relayState = false;
-      Serial.println("Relay OFF");
-    }
+    // Виклик функцій для керування світлодіодною стрічкою та реле
+    controlLEDStrip(lux);
+    controlRelay(moisturePercentage);
   }
-
+  
   // Виклик функції yield для обробки Bluetooth
   yield();
+}
+
+//LINK - Функція фітострічки
+void controlLEDStrip(uint16_t lux) {
+  if (lux < luxThreshold && !pixelState) {
+    for (int i = 0; i < numberOfPixels; i++) {
+      pixels.setPixelColor(i, pixels.Color(127, 0, 255));
+    }
+    pixels.show();  // Показати зміни на стрічці
+    ledStartTime = millis();
+    pixelState = true;
+  } else if (millis() - ledStartTime > ledRunTime && pixelState || lux > luxThreshold*2) {
+    for (int i = 0; i < numberOfPixels; i++) {
+      pixels.setPixelColor(i, 0);  // Вимкнення світлодіода
+    }
+    pixels.show();  // Показати зміни на стрічці
+    pixelState = false;
+  }
+}
+
+//LINK - Функція помпи
+void controlRelay(int moisturePercentage) {
+  if (moisturePercentage < moistureLowThreshold && !relayState) { // Якщо вологість менше порогу і реле вимкнене
+    digitalWrite(relayPin, HIGH); // Увімкнути реле
+    relayState = true;
+    Serial.println("Relay ON");
+  } else if (moisturePercentage >= moistureHighThreshold && relayState) { // Якщо вологість більше або дорівнює порогу і реле увімкнене
+    digitalWrite(relayPin, LOW); // Вимкнути реле
+    relayState = false;
+    Serial.println("Relay OFF");
+  }
 }
 
 // SECTION - BT

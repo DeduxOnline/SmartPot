@@ -1,48 +1,38 @@
 import create from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BluetoothDevice } from "react-native-bluetooth-classic";
 
+// Визначаємо інтерфейс для стану
 interface AppState {
-    count: number;
-    increment: () => void;
-    decrement: () => void;
+    pots: Plant[];
+    add: (pot: Plant) => void;
+    edit: (pot: Plant) => void;
 }
 
-// Load initial state from AsyncStorage or use default values
-const initialState: AppState = {
-    count: 0,
-    increment: () => { },
-    decrement: () => { },
-};
+// Створюємо стор
+const useStore = create<AppState>((set) => {
+    // Ініціалізація стану з AsyncStorage
+    AsyncStorage.getItem('pots')
+        .then((value) => {
+            return value !== null ? { pots: [] } : { pots: JSON.parse(value ?? "") }
+        })
+        .catch((error) => {
+            console.error("Error fetching pots from AsyncStorage:", error);
+            return { pots: [] }; // Return a default state in case of error
+        });
 
-// Create the store
-const useStore = create<AppState>((set, get) => ({
-    ...initialState,
-    increment: () => set((state) => ({ count: state.count + 1 })),
-    decrement: () => set((state) => ({ count: state.count - 1 })),
-}));
-
-// Load state from AsyncStorage on store creation
-(async () => {
-    try {
-        const savedState = await AsyncStorage.getItem('appState');
-        if (savedState !== null) {
-            useStore.setState(JSON.parse(savedState));
-        }
-    } catch (error) {
-        console.error('Error loading state from AsyncStorage:', error);
-    }
-})();
-
-// Save state to AsyncStorage on state change
-useStore.subscribe(
-    async (state) => {
-        try {
-            await AsyncStorage.setItem('appState', JSON.stringify(state));
-        } catch (error) {
-            console.error('Error saving state to AsyncStorage:', error);
-        }
-    }
-);
+    return {
+        pots: [],
+        add: (pot: Plant) => set((state) => {
+            const newPots = [...state.pots, pot];
+            AsyncStorage.setItem('pots', JSON.stringify(newPots));
+            return { pots: newPots };
+        }),
+        edit: (pot: Plant) => set((state) => {
+            const newPots = [...state.pots, pot];
+            AsyncStorage.setItem('pots', JSON.stringify(newPots));
+            return { pots: newPots };
+        }),
+    };
+});
 
 export default useStore;
