@@ -10,85 +10,31 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { images } from "@/constants/Picturs";
-
-const products: any = [
-  {
-    id: "1",
-    name: "Plant 1",
-    pic: 1,
-    mac: null,
-    watering: true,
-    light: false,
-    lastConnection: "29/05/2024",
-  },
-  {
-    id: "2",
-    name: "Plant 2",
-    pic: 2,
-    mac: null,
-    watering: true,
-    light: false,
-    lastConnection: "25/05/2024",
-  },
-  {
-    id: "3",
-    name: "Plant 3",
-    pic: 3,
-    mac: null,
-    watering: true,
-    light: false,
-    lastConnection: "24/05/2024",
-  },
-  {
-    id: "4",
-    name: "Plant 4",
-    pic: 4,
-    mac: null,
-    watering: true,
-    light: false,
-    lastConnection: "23/05/2024",
-  },
-  {
-    id: "5",
-    name: "Plant 5",
-    pic: 5,
-    mac: null,
-    watering: true,
-    light: false,
-    lastConnection: "25/05/2024",
-  },
-  {
-    id: "6",
-    name: "Plant 6",
-    pic: 6,
-    mac: null,
-    conected: false,
-    lastConnection: "27/05/2024",
-  },
-];
+import useStore from "@/hooks/useZustand";
 
 export default function HomeScreen() {
+  const pots = useStore((state) => state.pots);
   return (
     <View style={styles.container}>
-      {products.length === 0 ? (
+      {pots.length === 0 ? (
         <View style={styles.centered}>
           <Text style={styles.emptyText}>You don't have pots yet</Text>
           <Button title="Add Plant" onPress={() => router.push("/add")} />
         </View>
       ) : (
         <FlatList
-          data={products}
-          keyExtractor={(item) => item.id}
+          data={pots}
+          keyExtractor={(item) => item.address}
           renderItem={({ item }) => (
             <Pressable
               style={styles.productItem}
               onPress={() => router.push("/plant")}
             >
-              <Image source={images[item.pic]} style={styles.productImage} />
+              <Image
+                source={images[item.pictureNum]}
+                style={styles.productImage}
+              />
               <Text style={styles.productName}>{item.name}</Text>
-              <View style={{ marginLeft: "auto" }}>
-                <Text>Last time conected at {item.lastConnection}</Text>
-              </View>
             </Pressable>
           )}
         />

@@ -9,24 +9,36 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getDeviceConetion } from "@/func/BTfunct";
+import useStore from "@/hooks/useZustand";
+import { BluetoothDevice } from "react-native-bluetooth-classic";
 
 const AddPot = () => {
-  const [connectedDevices, setConnectedDevices] = useState<any[] | undefined>(
-    undefined
-  );
-
+  const [connectedDevices, setConnectedDevices] = useState<
+    BluetoothDevice[] | undefined
+  >(undefined);
+  const pots = useStore((state) => state.pots);
+  const { add } = useStore();
   return (
     <View style={styles.container}>
       <Button
         title="Scan Bluetooth"
-        onPress={async () =>
-          getDeviceConetion().then((items) => setConnectedDevices(items))
-        }
+        onPress={async () => {
+          const items = await getDeviceConetion();
+          if (items) {
+            const filteredItems = items.filter(
+              (item) => !pots.some((pot) => pot.address === item.address)
+            );
+            setConnectedDevices(filteredItems);
+          }
+        }}
       />
       <FlatList
         data={connectedDevices}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.productItem} onPress={() => null}>
+          <TouchableOpacity
+            style={styles.productItem}
+            onPress={() => add(item.address)}
+          >
             <Ionicons name="bluetooth" size={24} color="blue" />
             <Text style={styles.productName}>{item.name}</Text>
           </TouchableOpacity>

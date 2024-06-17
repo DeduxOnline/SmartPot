@@ -5,6 +5,7 @@ import {
     Alert
 } from "react-native";
 
+
 const showAlert = (msg: string) => {
     Alert.alert(
         "Bluetooth Pot",
@@ -41,19 +42,18 @@ export const getDeviceConetion = async () => {
     }
 };
 
-//FIXME - Need to remove it
-export const addPot = async (item: BluetoothDevice) => {
-    try {
-        const conecnted = await item.connect();
-        if (conecnted) {
-            item.write("Hello");
-            showAlert("Write to BT");
-        } else {
-            showAlert("Can't conect");
-        }
-    } catch (error: any) {
-        console.error(error.message);
-        showAlert(error.message);
-        return;
-    }
-};
+// export const addPot = async (item: BluetoothDevice) => {
+//     try {
+//         const conecnted = await item.connect();
+//         if (conecnted) {
+//             item.write("Hello");
+//             showAlert("Write to BT");
+//         } else {
+//             showAlert("Can't conect");
+//         }
+//     } catch (error: any) {
+//         console.error(error.message);
+//         showAlert(error.message);
+//         return;
+//     }
+// };

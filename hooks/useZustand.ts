@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Визначаємо інтерфейс для стану
 interface AppState {
     pots: Plant[];
-    add: (pot: Plant) => void;
+    add: (address: string) => void;
     edit: (pot: Plant) => void;
 }
 
@@ -22,13 +22,29 @@ const useStore = create<AppState>((set) => {
 
     return {
         pots: [],
-        add: (pot: Plant) => set((state) => {
-            const newPots = [...state.pots, pot];
+        add: (address: string) => set((state) => {
+            const Plant: Plant = {
+                pictureNum: 1,
+                address: address,
+                name: "Plant",
+                watering: {
+                    status: false,
+                    min: "30",
+                    max: "40",
+                },
+                light: {
+                    status: false,
+                    lux: "20",
+                    timeRunH: "2",
+                }
+            }
+            const newPots = [...state.pots, Plant];
             AsyncStorage.setItem('pots', JSON.stringify(newPots));
             return { pots: newPots };
         }),
         edit: (pot: Plant) => set((state) => {
-            const newPots = [...state.pots, pot];
+            const filterPots = state.pots.filter(item => item.address !== pot.address)
+            const newPots = [...filterPots, pot];
             AsyncStorage.setItem('pots', JSON.stringify(newPots));
             return { pots: newPots };
         }),
